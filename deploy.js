@@ -5,6 +5,7 @@ path = require('path');
 const {NodeSSH} = require('node-ssh')
 ssh = new NodeSSH();
 
+
 // the method that starts the deployment process
 function main() {
   console.log('Deployment started.');
@@ -22,8 +23,8 @@ function installPM2() {
 // transfers local project to the remote server
 function transferProjectToRemote(failed, successful) {
   return ssh.putDirectory(
-    '../riot-express-riot-express-riot-express-riot-express-riot-express-riot-express-todo-list',
-    '/home/ubuntu/riot-express-riot-express-riot-express-riot-express-riot-express-riot-express-todo-list-temp',
+    '../Starter-node-angular',
+    '/home/ubuntu/Starter-node-angular-temp',
     {
       recursive: true,
       concurrency: 1,
@@ -49,7 +50,7 @@ function transferProjectToRemote(failed, successful) {
 // creates a temporary folder on the remote server
 function createRemoteTempFolder() {
   return ssh.execCommand(
-    'rm -rf riot-express-riot-express-riot-express-riot-express-riot-express-riot-express-todo-list-temp && mkdir riot-express-riot-express-riot-express-riot-express-riot-express-riot-express-todo-list-temp', {
+    'rm -rf Starter-node-angular-temp && mkdir Starter-node-angular-temp', {
       cwd: '/home/ubuntu'
   });
 }
@@ -65,7 +66,7 @@ function stopRemoteServices() {
 // updates the project source on the server
 function updateRemoteApp() {
   return ssh.execCommand(
-    'mkdir riot-express-riot-express-riot-express-riot-express-riot-express-riot-express-todo-list && cp -r riot-express-riot-express-riot-express-riot-express-riot-express-riot-express-todo-list-temp/* riot-express-riot-express-riot-express-riot-express-riot-express-riot-express-todo-list/ && rm -rf riot-express-riot-express-riot-express-riot-express-riot-express-riot-express-todo-list-temp', {
+    'mkdir Starter-node-angular && cp -r Starter-node-angular-temp/* Starter-node-angular/ && rm -rf Starter-node-angular-temp', {
       cwd: '/home/ubuntu'
   });
 }
@@ -73,7 +74,7 @@ function updateRemoteApp() {
 // restart mongodb and node services on the remote server
 function restartRemoteServices() {
   return ssh.execCommand(
-    'cd riot-express-riot-express-riot-express-riot-express-riot-express-riot-express-todo-list && sudo service mongod start && pm2 start app.js', {
+    'cd Starter-node-angular && sudo service mongod start && pm2 start app.js', {
       cwd: '/home/ubuntu'
   });
 }
@@ -84,10 +85,10 @@ function sshConnect() {
 
   ssh
     .connect({
-        host: '23.22.199.133',
-        username: 'ubuntu',
-        privateKey: 'nodeAngular-key.pem'// TODO: ADD YOUR IP ADDRESS BELOW (e.g. '12.34.5.67')
-     
+      // TODO: ADD YOUR IP ADDRESS BELOW (e.g. '12.34.5.67')
+      host: '00.00.00.00',
+      username: 'ubuntu',
+      privateKey: 'hs-key.pem'
     })
     .then(function() {
       console.log('SSH Connection established.');
@@ -95,7 +96,7 @@ function sshConnect() {
       return installPM2();
     })
     .then(function() {
-      console.log('Creating `riot-express-riot-express-riot-express-riot-express-riot-express-riot-express-todo-list-temp` folder.');
+      console.log('Creating `Starter-node-angular-temp` folder.');
       return createRemoteTempFolder();
     })
     .then(function(result) {
@@ -141,7 +142,6 @@ function sshConnect() {
     })
     .catch(e => {
       console.error(e);
-      process.exit(1);
     });
 }
 
